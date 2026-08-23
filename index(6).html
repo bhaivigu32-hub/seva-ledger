@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#6335e8">
+<title>SevaLedger Mobile</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:#f5f6fb;color:#202536;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+body{min-height:100vh}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.app{width:100%;max-width:520px;margin:auto;min-height:100vh;background:#f5f6fb;padding-bottom:82px}
+.header{background:linear-gradient(135deg,#5d35e8,#a13be8);color:white;padding:18px 18px 22px;border-radius:0 0 24px 24px}
+.header-line{display:flex;align-items:center;justify-content:space-between}
+.brand{font-size:22px;font-weight:800}.subbrand{font-size:12px;opacity:.85;margin-top:3px}
+.profile{width:42px;height:42px;border-radius:50%;background:#ffffff22;display:grid;place-items:center;font-size:20px}
+.content{padding:18px}
+.screen{display:none}.screen.active{display:block}
+h1{font-size:25px;margin:0 0 5px}.subtitle{font-size:14px;color:#7d8595;margin:0 0 18px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:11px}.stat{background:#fff;border:1px solid #e8eaf0;border-radius:15px;padding:15px}.stat span{font-size:12px;color:#777f8f}.stat b{display:block;font-size:20px;margin-top:7px}.purple{color:#6335e8}.green{color:#079657}.red{color:#d93650}
+.card{background:#fff;border:1px solid #e7e9ef;border-radius:15px;padding:17px;margin-top:14px}
+.action{width:100%;border:0;border-radius:12px;padding:15px;text-align:left;margin-top:10px;font-weight:700}.action.primary{background:#6335e8;color:#fff}.action.light{background:#f0ecff;color:#6335e8}
+.field{margin-bottom:13px}.field label{display:block;font-size:12px;font-weight:700;margin-bottom:7px;color:#4c5566}.field input,.field select,.field textarea{width:100%;border:1px solid #d9dce4;border-radius:10px;background:#fff;padding:13px;outline:none}.field input:focus,.field select:focus,.field textarea:focus{border-color:#6335e8}.field textarea{min-height:90px;resize:none}
+.amounts{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:8px}.amount{border:1px solid #dfd3fb;background:#f8f3ff;color:#6335e8;border-radius:9px;padding:10px 3px;font-weight:700}
+.big{width:100%;border:0;border-radius:11px;padding:14px;font-weight:800;font-size:16px}.save{background:#6335e8;color:white}
+.table-card{background:#fff;border:1px solid #e7e9ef;border-radius:15px;overflow:hidden}.record{padding:15px;border-bottom:1px solid #eceef3}.record:last-child{border-bottom:0}.record-top{display:flex;justify-content:space-between;font-weight:700}.record-meta{font-size:12px;color:#7d8595;margin-top:6px}.record-actions{margin-top:10px;display:flex;gap:7px}.small-btn{border:1px solid #dfe2e9;background:#fff;border-radius:8px;padding:8px 10px;font-size:12px}.wa{background:#eaf8ef;color:#08763e;border-color:#bde5cc}
+.empty{text-align:center;padding:28px 15px;color:#858d9b}
+.bottom{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e2e4ea;z-index:20;padding:6px 5px calc(6px + env(safe-area-inset-bottom))}
+.bottom-inner{max-width:520px;margin:auto;display:grid;grid-template-columns:repeat(5,1fr)}
+.nav-btn{border:0;background:transparent;color:#7c8492;font-size:10px;padding:5px 2px}.nav-btn .ico{font-size:22px;display:block;margin-bottom:2px}.nav-btn.active{color:#6335e8;font-weight:700}.center-add{width:50px;height:50px;border-radius:50%;background:#6335e8;color:#fff;margin:-20px auto 0;box-shadow:0 5px 15px #6335e855;font-size:25px;border:4px solid #f5f6fb}
+.modal{position:fixed;inset:0;background:#0008;z-index:30;display:none;align-items:flex-end;justify-content:center}.modal.show{display:flex}.sheet{width:100%;max-width:520px;background:#fff;border-radius:22px 22px 0 0;padding:22px 18px calc(25px + env(safe-area-inset-bottom));max-height:88vh;overflow:auto}.sheet h2{margin:0 0 14px;text-align:center;color:#6335e8}.receipt-row{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid #eee;font-size:14px}.success{background:#eaf8ef;color:#0a7740;border-radius:10px;padding:11px;margin-bottom:12px;font-size:13px}.close{width:100%;margin-top:9px;background:#f1f2f5;border:0;border-radius:10px;padding:12px}.notice{background:#fff6d9;color:#765900;padding:10px;border-radius:9px;font-size:12px;margin-top:12px}
+@media(min-width:521px){body{background:#ddd}.app{box-shadow:0 0 35px #0002}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="header"><div class="header-line"><div><div class="brand">SevaLedger</div><div class="subbrand">Digital Donations & Expenses</div></div><div class="profile">₹</div></div></header>
+
+<main class="content">
+
+<section id="home" class="screen active">
+<h1>Dashboard</h1><p class="subtitle">Manage your donations and expenses.</p>
+<div class="stats"><div class="stat"><span>Total Donations</span><b id="totalDonation" class="purple">₹0</b></div><div class="stat"><span>Received</span><b id="received" class="green">₹0</b></div><div class="stat"><span>Expenses</span><b id="totalExpense" class="red">₹0</b></div><div class="stat"><span>Balance</span><b id="balance" class="purple">₹0</b></div></div>
+<div class="card"><h3 style="margin:0">Quick Actions</h3><button class="action primary" data-screen="receipt">＋ Create Digital Receipt</button><button class="action light" data-screen="expenses">＋ Add Expense</button></div>
+</section>
+
+<section id="donations" class="screen">
+<h1>Donations</h1><p class="subtitle">Your saved digital receipts.</p><div id="donationList" class="table-card"></div>
+</section>
+
+<section id="receipt" class="screen">
+<h1>New Donation</h1><p class="subtitle">Create and save a digital receipt.</p>
+<div class="card">
+<div class="field"><label>Donor Name</label><input id="donorName" placeholder="Full name"></div>
+<div class="field"><label>WhatsApp Number</label><input id="donorPhone" maxlength="10" inputmode="numeric" placeholder="10 digit mobile number"></div>
+<div class="field"><label>Date</label><input id="donorDate" type="date"></div>
+<div class="field"><label>Payment Method</label><select id="donorMethod"><option>Cash</option><option>UPI</option><option>Bank Transfer</option><option>Card</option></select></div>
+<div class="field"><label>Donation Amount (₹)</label><input id="donorAmount" type="number" inputmode="decimal" placeholder="Enter amount"><div class="amounts"><button class="amount" data-amount="101">₹101</button><button class="amount" data-amount="501">₹501</button><button class="amount" data-amount="1001">₹1001</button><button class="amount" data-amount="5001">₹5001</button></div></div>
+<div class="field"><label>Purpose / Description</label><textarea id="donorPurpose" maxlength="180" placeholder="Festival donation"></textarea></div>
+<button id="saveReceipt" class="big save">Generate & Save Receipt</button><div id="receiptMessage"></div>
+</div>
+</section>
+
+<section id="expenses" class="screen">
+<h1>Expenses</h1><p class="subtitle">Track your organization expenses.</p>
+<div class="card">
+<div class="field"><label>Expense Title</label><input id="expenseTitle" placeholder="Decoration"></div>
+<div class="field"><label>Amount (₹)</label><input id="expenseAmount" type="number" inputmode="decimal" placeholder="Enter amount"></div>
+<div class="field"><label>Date</label><input id="expenseDate" type="date"></div>
+<div class="field"><label>Category</label><select id="expenseCategory"><option>Event</option><option>Food</option><option>Decoration</option><option>Transport</option><option>Other</option></select></div>
+<button id="saveExpense" class="big save">Save Expense</button><div id="expenseMessage"></div>
+</div><div id="expenseList" class="table-card"></div>
+</section>
+
+<section id="reports" class="screen">
+<h1>Reports</h1><p class="subtitle">Live summary of saved data.</p>
+<div class="stats"><div class="stat"><span>Donations</span><b id="reportDonations" class="purple">₹0</b></div><div class="stat"><span>Expenses</span><b id="reportExpenses" class="red">₹0</b></div><div class="stat"><span>Balance</span><b id="reportBalance" class="green">₹0</b></div><div class="stat"><span>Receipts</span><b id="reportCount">0</b></div></div>
+<div class="card"><h3 style="margin-top:0">Backup</h3><p class="subtitle">Download your saved data as a backup file.</p><button id="backup" class="big" style="background:#f0ecff;color:#6335e8">Download Backup</button><button id="clear" class="big" style="background:#fff0f2;color:#d93650;margin-top:9px">Delete All Data</button></div>
+</section>
+
+</main>
+
+<nav class="bottom"><div class="bottom-inner">
+<button class="nav-btn active" data-screen="home"><span class="ico">⌂</span>Home</button>
+<button class="nav-btn" data-screen="donations"><span class="ico">▤</span>Donations</button>
+<button class="nav-btn" data-screen="receipt"><span class="center-add">＋</span>Receipt</button>
+<button class="nav-btn" data-screen="expenses"><span class="ico">₹</span>Expenses</button>
+<button class="nav-btn" data-screen="reports"><span class="ico">▥</span>Reports</button>
+</div></nav>
+</div>
+
+<div id="receiptModal" class="modal"><div class="sheet"><h2>Digital Receipt</h2><div id="receiptDetails"></div><a id="whatsappLink" class="big save" style="display:block;text-align:center;text-decoration:none" target="_blank">Send on WhatsApp</a><button id="printReceipt" class="close">Print Receipt</button><button id="closeReceipt" class="close">Close</button></div></div>
+
+<script>
+const DKEY="seva_mobile_donations",EKEY="seva_mobile_expenses";
+let donations=JSON.parse(localStorage.getItem(DKEY)||"[]"),expenses=JSON.parse(localStorage.getItem(EKEY)||"[]");
+const $=id=>document.getElementById(id),money=n=>"₹"+Number(n||0).toLocaleString("en-IN");
+function save(){localStorage.setItem(DKEY,JSON.stringify(donations));localStorage.setItem(EKEY,JSON.stringify(expenses));}
+function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("active",s.id===id));document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.screen===id));render();window.scrollTo(0,0)}
+document.addEventListener("click",e=>{let b=e.target.closest("[data-screen]");if(b){show(b.dataset.screen);return}let a=e.target.closest("[data-amount]");if(a){e.preventDefault();$("donorAmount").value=a.dataset.amount}});
+$("donorDate").valueAsDate=new Date();$("expenseDate").valueAsDate=new Date();
+
+$("saveReceipt").onclick=()=>{
+ const name=$("donorName").value.trim(),phone=$("donorPhone").value.replace(/\D/g,""),amount=Number($("donorAmount").value);
+ if(!name||phone.length!==10||amount<=0){$("receiptMessage").innerHTML='<div class="notice">Please enter donor name, valid 10-digit WhatsApp number and amount.</div>';return}
+ const x={id:"SR-"+Date.now().toString().slice(-8),name,phone,amount,date:$("donorDate").value,method:$("donorMethod").value,purpose:$("donorPurpose").value.trim()};
+ donations.unshift(x);save();render();openReceipt(x);["donorName","donorPhone","donorAmount","donorPurpose"].forEach(id=>$(id).value="");
+};
+
+$("saveExpense").onclick=()=>{
+ const title=$("expenseTitle").value.trim(),amount=Number($("expenseAmount").value);
+ if(!title||amount<=0){$("expenseMessage").innerHTML='<div class="notice">Please enter expense title and amount.</div>';return}
+ expenses.unshift({id:Date.now(),title,amount,date:$("expenseDate").value,category:$("expenseCategory").value});save();render();$("expenseTitle").value="";$("expenseAmount").value="";$("expenseMessage").innerHTML='<div class="success">✓ Expense saved.</div>';
+};
+
+function render(){
+ const d=donations.reduce((s,x)=>s+x.amount,0),e=expenses.reduce((s,x)=>s+x.amount,0);
+ $("totalDonation").textContent=money(d);$("received").textContent=money(d);$("totalExpense").textContent=money(e);$("balance").textContent=money(d-e);
+ $("reportDonations").textContent=money(d);$("reportExpenses").textContent=money(e);$("reportBalance").textContent=money(d-e);$("reportCount").textContent=donations.length;
+ $("donationList").innerHTML=donations.length?donations.map((x,i)=>`<div class="record"><div class="record-top"><span>${esc(x.name)}</span><span class="purple">${money(x.amount)}</span></div><div class="record-meta">${x.id} · ${x.date} · ${esc(x.method)}</div><div class="record-actions"><button class="small-btn" onclick="openByIndex(${i})">View Receipt</button><button class="small-btn wa" onclick="shareByIndex(${i})">WhatsApp</button></div></div>`).join(""):'<div class="empty">No donations yet.<br><br>Create your first receipt.</div>';
+ $("expenseList").innerHTML=expenses.length?expenses.map((x,i)=>`<div class="record"><div class="record-top"><span>${esc(x.title)}</span><span class="red">${money(x.amount)}</span></div><div class="record-meta">${x.category} · ${x.date}</div><div class="record-actions"><button class="small-btn" onclick="removeExpense(${i})">Delete</button></div></div>`).join(""):'<div class="empty">No expenses yet.</div>';
+}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function openByIndex(i){openReceipt(donations[i])}
+function shareByIndex(i){openReceipt(donations[i]);setTimeout(()=>window.open($("whatsappLink").href,"_blank"),150)}
+function openReceipt(x){
+ $("receiptDetails").innerHTML=`<div class="success">✓ Receipt saved successfully</div><div class="receipt-row"><span>Receipt</span><b>${x.id}</b></div><div class="receipt-row"><span>Donor</span><b>${esc(x.name)}</b></div><div class="receipt-row"><span>Mobile</span><span>+91 ${x.phone}</span></div><div class="receipt-row"><span>Date</span><span>${x.date}</span></div><div class="receipt-row"><span>Payment</span><span>${esc(x.method)}</span></div><div class="receipt-row"><span>Purpose</span><span>${esc(x.purpose||"Donation")}</span></div><div class="receipt-row" style="font-weight:800;font-size:18px"><span>Amount</span><span>${money(x.amount)}</span></div>`;
+ const msg=encodeURIComponent(`🙏 SevaLedger Digital Donation Receipt\n\nReceipt: ${x.id}\nDonor: ${x.name}\nAmount: ${money(x.amount)}\nDate: ${x.date}\nPayment: ${x.method}\nPurpose: ${x.purpose||"Donation"}\n\nThank you for your generous contribution!`);
+ $("whatsappLink").href="https://wa.me/91"+x.phone+"?text="+msg;$("receiptModal").classList.add("show");
+}
+$("closeReceipt").onclick=()=>$("receiptModal").classList.remove("show");
+$("printReceipt").onclick=()=>window.print();
+function removeExpense(i){if(confirm("Delete this expense?")){expenses.splice(i,1);save();render()}}
+$("backup").onclick=()=>{const blob=new Blob([JSON.stringify({donations,expenses,backupDate:new Date().toISOString()},null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="seva-ledger-backup.json";a.click();URL.revokeObjectURL(a.href)};
+$("clear").onclick=()=>{if(confirm("Delete all saved donations and expenses?")){donations=[];expenses=[];save();render()}};
+render();
+</script>
+</body>
+</html>
